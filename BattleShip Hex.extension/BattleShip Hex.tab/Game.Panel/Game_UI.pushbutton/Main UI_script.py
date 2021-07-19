@@ -1,5 +1,5 @@
 __doc__ = "XXXXXXXXXX"
-__title__ = "GUI\ntemplate_other method"
+__title__ = "Play!"
 # dependencies
 import clr
 clr.AddReference('System.Windows.Forms')
@@ -7,14 +7,13 @@ clr.AddReference('IronPython.Wpf')
 
 # find the path of ui.xaml
 from pyrevit import UI, DB
-from pyrevit import script, revit, forms, HOST_APP
+from pyrevit import script, revit, forms
 from pyrevit.forms import WPFWindow
-import EVENT
-xamlfile = script.get_bundle_file('GUI template_UI.xaml')
-uidoc = revit.uidoc
-import Autodesk.Revit.UI.Selection as ARUS
 
-customizable_event = EVENT.CustomizableEvent()
+xamlfile = script.get_bundle_file('Main Game_UI.xaml')
+
+
+
 
 class data_grid_obj(object):
     def __init__(self, eid, checked, comment,window):
@@ -119,44 +118,6 @@ class UI_Window(WPFWindow):
     def print_opt_status(self):
         print "optA = {}\noptB = {}\noptC = {}".format(self.optA,self.optB,self.optC)
 
-
-    def update_progress_bar(self):
-        self.progress_bar.Value += 1
-#################################################################################
-def pick_element():
-    print "start to run pick element function"
-    print uidoc
-    print uidoc.Selection
-    print ARUS.ObjectType.Element
-    #element = uidoc.Selection.PickObject(UI.Selection.ObjectType.Element, AxisISelectionFilter(), "Select an curve based element")
-    with DB.Transaction( revit.doc,"temp"):
-        element = ARUS.Selection.PickObject(uidoc.Selection, ARUS.ObjectType.Element,  "Select an element")
-    print element
-    uidoc.Selection.SetElementIds(element.ElementId)
-    return element
-
-class AxisISelectionFilter(UI.Selection.ISelectionFilter):
-    """ISelectionFilter that allow only which have an axis (Line)"""
-
-    # noinspection PyMethodMayBeStatic, PyPep8Naming
-    def AllowElement(self, element):
-        if isinstance(element.Location.Curve, Line):
-            return True
-        else:
-            return False
-
-"""
-def axis_selection():
-    #Ask user to select an element, return the axis of the element
-    try:
-        reference = uidoc.Selection.PickObject(UI.Selection.ObjectType.Element, AxisISelectionFilter(), "Select an axis")
-    except OperationCanceledException:
-        pass
-    else:
-        axis = doc.GetElement(reference).Location.Curve
-        return axis
-"""
-##################################################
 
 
 
