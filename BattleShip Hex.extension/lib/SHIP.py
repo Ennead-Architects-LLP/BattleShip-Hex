@@ -104,26 +104,28 @@ def set_target_position_xy(target, x, y):
 def get_target_team(target):
     return target.LookupParameter("_TEAM").AsString()
 
+
+
 def move_target(target, direction):
     x = get_target_position_x(target)
     y = int(get_target_position_y(target))
     team = get_target_team(target)
-    """direction = 0,1,2,3,4,5.  0 = true east, then courter-clockwise"""
-    if x == "A" and direction in [1,2]:
+    """direction = E,NE,NW,W,SW,SE.  E = true east, then courter-clockwise"""
+    if x == "A" and direction in ["NE","NW"]:
         # cannot have letter smaller than A.
         return
-    if direction == 0:
+    if direction == "E":
         y += 1
-    elif direction == 1:
+    elif direction == "NE":
         x = chr(ord(x) - 1)
-    elif direction == 2:
+    elif direction == "NW":
         x = chr(ord(x) - 1)
         y -= 1
-    elif direction == 3:
+    elif direction == "W":
         y -= 1
-    elif direction == 4:
+    elif direction == "SW":
         x = chr(ord(x) + 1)
-    elif direction == 5:
+    elif direction == "SE":
         x = chr(ord(x) + 1)
         y += 1
 
@@ -137,12 +139,13 @@ def move_target(target, direction):
         #print "updated"
 
 def get_ship_at_target(target):
-    enemy_ships = get_all_ships(get_enemy(get_target_team(target)))
+    enemy_ships = get_all_ships_in_team(get_enemy(get_target_team(target)))
     for enemy_ship in enemy_ships:
         for tile in get_tiles_below_ship(enemy_ship):
             if BOARD.get_tile_position_x(tile) == get_target_position_x(target) and BOARD.get_tile_position_y(tile) == get_target_position_y(target):
-                BOARD.show_skull(tile)
+                BOARD.bomb_tile(tile, hit = True)
                 return enemy_ship
 
-    BOARD.show_missymbol(tile)
+    tile_of_target = BOARD.get_tile_by_XY(get_target_position_x(target),get_target_position_y(target),get_enemy(get_target_team(target)))
+    BOARD.bomb_tile(tile_of_target, hit = False)
     return "no hit"

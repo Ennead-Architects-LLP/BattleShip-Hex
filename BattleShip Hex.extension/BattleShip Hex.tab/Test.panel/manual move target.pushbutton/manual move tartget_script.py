@@ -7,18 +7,12 @@ from pyrevit import script, revit, forms
 import BOARD, CAMERA, ANIMATION, SHIP
 import random
 
+def move(team):
+    target = SHIP.get_target_by_team(team)
+    SHIP.move_target(target, 4)
 
-team = "A"
-all_ships = SHIP.get_all_ships_in_team(team)
-
-
-target = SHIP.get_target_by_team(team)
-SHIP.move_target(target, 4)
-
-
-team = "B"
-all_ships = SHIP.get_all_ships_in_team(team)
-
-
-target = SHIP.get_target_by_team(team)
-SHIP.move_target(target, 4)
+for i in range(5):
+    team = "A"
+    move(team)
+    team = "B"
+    move(team)

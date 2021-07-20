@@ -1,6 +1,6 @@
 from pyrevit import UI, DB
 from pyrevit import script, revit, forms
-
+import BOARD
 
 def get_all_tiles(team = None):
     generic_models = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()
@@ -30,3 +30,12 @@ def get_tile_by_XY(x,y, team):
 
 def set_selection_to_tiles(tiles):
     revit.get_selection().set_to(tiles)
+
+
+def bomb_tile(tile, hit):
+    BOARD.set_selection_to_tiles([tile])
+    with revit.Transaction("tile graphic change"):
+        if hit:
+            tile.LookupParameter("show_skull").Set(1)
+        else:
+            tile.LookupParameter("show_miss symbol").Set(1)
