@@ -39,3 +39,8 @@ def bomb_tile(tile, hit):
             tile.LookupParameter("show_skull").Set(1)
         else:
             tile.LookupParameter("show_miss symbol").Set(1)
+
+def reset_tile(tile):
+    with revit.Transaction("tile graphic change"):
+        tile.LookupParameter("show_skull").Set(0)
+        tile.LookupParameter("show_miss symbol").Set(0)

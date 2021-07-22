@@ -20,18 +20,17 @@
                 <Button Content="SE" Canvas.Left="107" Canvas.Top="110" Width="30" Click="target_move_SE"/>
                 <Button Content="SW" Canvas.Left="50" Canvas.Top="110" Width="30" Click="target_move_SW"/>
                 <Button Content="W" Canvas.Left="10" Canvas.Top="61" Width="30" Click="target_move_W"/>
-                <TextBlock Canvas.Left="45" TextWrapping="Wrap" Text="target position" Canvas.Top="61"/>
+                <TextBlock x:Name ="target_position_display" TextAlignment="Center"  Canvas.Left="46" TextWrapping="Wrap" Text="target" Canvas.Top="60" Foreground="White" FontSize="22" Width="100"/>
             </Canvas>
-            <GroupBox Grid.Column="1" Header="GroupBox" Width="100" Height="80">
+            <GroupBox Grid.Column="1" Header="Current Team" Width="120" Height="80">
                 <StackPanel>
-                    <RadioButton Content="team A" x:Name ="is_team_A"  Click ="team_changed" IsChecked="True" Foreground="#FFC90A0A"/>
-                    <RadioButton Content="team B" x:Name ="is_team_B"  Click ="team_changed" Foreground="#FF1C6FC1"/>
+                    <TextBlock x:Name="team_display" Text="team now" Foreground="White" FontSize="16" FontFamily="Segoe UI Black"/>
                 </StackPanel>
 
             </GroupBox>
         </Grid>
-        
-        <Button Content="Fire" Click="play"/>
+
+        <Button Content="Fire" Click="play" Height="90" FontSize="48" FontFamily="Snap ITC" BorderBrush="#FFFF2222"/>
         <Button Content="Reset Game" Click="reset_game"/>
 
 

@@ -22,13 +22,37 @@ def get_closest_tile_by_node(node):
             return tile
     return "no close tile found"
 
+def get_node_above_tile(tile):
+    nodes = get_all_nodes()
+    pt_b = tile.Location.Point
+    for node in nodes:
+        pt_a = node.Location.Point
+        dist = pt_a.DistanceTo(pt_b)
+        if GAME_RULE.almost_equal(dist, 0):
+            return node
+    return "no node above tile"
 
+def mark_node_as_hit(node):
+    with revit.Transaction("hit node"):
+        node.LookupParameter("Comments").Set("hit")
 
 ################### ship content  ###################
 def get_enemy(team):
     if team == "A":
         return "B"
     return "A"
+
+def update_ship_status(ship):
+    ship_nodes = get_ship_nodes(ship)
+    for node in ship_nodes:
+        if node.LookupParameter("Comments").AsString() != "hit":
+            return "still good"
+
+    with revit.Transaction("ship dead"):
+        ship.LookupParameter("_IS_DEAD").Set(1)
+
+        ship.LookupParameter("ship_mat.").Set(GAME_RULE.get_material_by_name("ruin").Id)
+    return "dead ship"
 
 
 def get_all_ships():
@@ -38,8 +62,15 @@ def get_all_ships():
 
 def get_all_ships_in_team(team):
     all_ships = get_all_ships()
-    team_ship = filter(lambda x: get_ship_team(x) == team, all_ships)
-    return team_ship
+    team_ships = filter(lambda x: get_ship_team(x) == team, all_ships)
+    return team_ships
+
+def get_good_ship_in_team(team):
+    ships = get_all_ships_in_team(team)
+    for ship in ships:
+        if update_ship_status(ship) == "still good":
+            return ship
+    return "no ship"
 
 def get_ship_team(ship):
     return ship.LookupParameter("_TEAM").AsString()
@@ -56,6 +87,17 @@ def get_tiles_below_ship(ship):
     nodes = get_ship_nodes(ship)
     tiles = map(get_closest_tile_by_node, nodes)
     return tiles
+
+def reset_ship(ship):
+    with revit.Transaction("ship reset graphic change"):
+        ship.LookupParameter("_IS_DEAD").Set(0)
+        team_mat = GAME_RULE.get_material_by_name("TEAM {}".format(get_ship_team(ship)))
+        ship.LookupParameter("ship_mat.").Set(team_mat.Id)
+
+        for node in get_ship_nodes(ship):
+            node.LookupParameter("Comments").Set("ok")
+
+        #to do: get nodes below and reset is_hit to no
 
 ################### bomb content  ###################
 def get_bomb_symbol_old():
@@ -104,7 +146,12 @@ def set_target_position_xy(target, x, y):
 def get_target_team(target):
     return target.LookupParameter("_TEAM").AsString()
 
-
+def reset_target(target):
+    with revit.Transaction("reset target"):
+        x, y = "J", "10"
+        default_position_tile = BOARD.get_tile_by_XY(x,y, get_enemy(get_target_team(target)))
+        target.Location.Point = default_position_tile.Location.Point
+        set_target_position_xy(target, x, y)
 
 def move_target(target, direction):
     x = get_target_position_x(target)
@@ -142,10 +189,16 @@ def get_ship_at_target(target):
     enemy_ships = get_all_ships_in_team(get_enemy(get_target_team(target)))
     for enemy_ship in enemy_ships:
         for tile in get_tiles_below_ship(enemy_ship):
-            if BOARD.get_tile_position_x(tile) == get_target_position_x(target) and BOARD.get_tile_position_y(tile) == get_target_position_y(target):
+            if BOARD.get_tile_position_x(tile) == get_target_position_x(target)\
+             and BOARD.get_tile_position_y(tile) == get_target_position_y(target):
                 BOARD.bomb_tile(tile, hit = True)
+                node = get_node_above_tile(tile)
+                mark_node_as_hit(node)
+                update_ship_status(enemy_ship)
                 return enemy_ship
 
-    tile_of_target = BOARD.get_tile_by_XY(get_target_position_x(target),get_target_position_y(target),get_enemy(get_target_team(target)))
+    tile_of_target = BOARD.get_tile_by_XY(get_target_position_x(target),\
+                                            get_target_position_y(target),\
+                                            get_enemy(get_target_team(target)))
     BOARD.bomb_tile(tile_of_target, hit = False)
     return "no hit"

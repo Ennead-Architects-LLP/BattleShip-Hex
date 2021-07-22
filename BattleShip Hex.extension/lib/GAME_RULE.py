@@ -8,6 +8,9 @@ def almost_equal(a,b):
         return True
     return False
 
+def get_material_by_name(name):
+    all_materials = DB.FilteredElementCollector(revit.doc).OfClass(DB.Material).WhereElementIsNotElementType().ToElements()
+    return filter(lambda x: x.Name == name, all_materials)[0]
 
 def change_to_player_view():
     """active view as player view so two player can be on same machine!!!. use plan for target, use 3d for battle"""
@@ -44,5 +47,24 @@ def play(team):
     with revit.TransactionGroup("Play"):
         target = SHIP.get_target_by_team(team)
         SHIP.move_target(target, random.randint(0,5))
-        ANIMATION.fly_bomb(SHIP.get_all_ships_in_team(team)[0], target)
-        SHIP.get_ship_at_target(target)
+        ship = SHIP.get_good_ship_in_team(team)
+        if isinstance(ship, str):
+            forms.alert("Team {} has lost!".format(team))
+            CAMERA.go_to_god_view()
+            return
+        ANIMATION.fly_bomb(ship, target)
+        result = SHIP.get_ship_at_target(target)
+    if result == "no hit":
+        return "turn ended"
+
+    #record deamged ship
+    return "continue"
+
+def reset_map():
+    map(lambda x: BOARD.reset_tile(x), BOARD.get_all_tiles())
+    targets = [SHIP.get_target_by_team(x) for x in ["A", "B"]]
+    map(lambda x: SHIP.reset_target(x), targets)
+    map(lambda x: SHIP.reset_ship(x), SHIP.get_all_ships())
+    revit.get_selection().set_to([])
+
+    # to do: change to this to title screen or a view that akllow player to deploy ship, maybe plan?

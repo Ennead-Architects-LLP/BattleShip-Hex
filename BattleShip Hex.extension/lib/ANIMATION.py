@@ -1,6 +1,7 @@
 from pyrevit import UI, DB
 from pyrevit import script, revit, forms
 import SHIP
+from time import sleep
 
 def fly_bomb(my_ship, target):
     initial_pt = my_ship.Location.Point
@@ -16,7 +17,7 @@ def fly_bomb(my_ship, target):
 
     bomb = SHIP.get_bomb()
     SHIP.bomb_show(bomb)
-    step = 80 if True else 200 # later update this to make bigger bomb fly in more framethus slower?
+    step = 50 if True else 200 # later update this to make bigger bomb fly in more framethus slower?
     for i in range(step + 1):
         pt_para = float(i)/step
         temp_location = arc.Evaluate(pt_para, True)
