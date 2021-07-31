@@ -19,6 +19,12 @@ def return_to_title_screen():
     revit.uidoc.ActiveView = view
     revit.uidoc.RefreshActiveView()
 
+def go_to_game_over_view():
+    view = get_view_by_name("Game Over")
+    revit.uidoc.ActiveView = view
+    revit.uidoc.RefreshActiveView()
+
+
 def go_to_god_view():
     view = get_view_by_name("god view")
     revit.uidoc.ActiveView = view

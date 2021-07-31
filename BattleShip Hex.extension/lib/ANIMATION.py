@@ -31,3 +31,8 @@ def fly_bomb(my_ship, target):
         revit.uidoc.RefreshActiveView()
 
     SHIP.bomb_hide(bomb)
+
+
+    target_ship = SHIP.get_ship_at_target(target)
+    if not isinstance(target_ship, str):
+        SHIP.update_ship_status(target_ship)

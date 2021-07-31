@@ -8,11 +8,17 @@ def almost_equal(a,b):
         return True
     return False
 
+def is_team_lost(team):
+    if SHIP.get_good_ship_in_team(team) == "no ship":
+        return True
+    #print "{} is still ok".format(team)
+    return False
+
 def get_material_by_name(name):
     all_materials = DB.FilteredElementCollector(revit.doc).OfClass(DB.Material).WhereElementIsNotElementType().ToElements()
     return filter(lambda x: x.Name == name, all_materials)[0]
 
-def change_to_player_view():
+def change_to_player_view_OLD():
     """active view as player view so two player can be on same machine!!!. use plan for target, use 3d for battle"""
     pass
 
@@ -48,11 +54,20 @@ def play(team):
         target = SHIP.get_target_by_team(team)
         SHIP.move_target(target, random.randint(0,5))
         ship = SHIP.get_good_ship_in_team(team)
+        """#check enegy team after each fire, so green code below is useless
         if isinstance(ship, str):
             forms.alert("Team {} has lost!".format(team))
             CAMERA.go_to_god_view()
             return
+        """
         ANIMATION.fly_bomb(ship, target)
+        enemy_team = SHIP.get_enemy(team)
+        if is_team_lost(enemy_team):
+
+            CAMERA.go_to_game_over_view()
+            forms.alert("Team {} has lost!".format(enemy_team))
+            CAMERA.go_to_god_view()
+            return
         result = SHIP.get_ship_at_target(target)
     if result == "no hit":
         return "turn ended"
