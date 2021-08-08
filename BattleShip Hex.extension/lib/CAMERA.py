@@ -27,6 +27,8 @@ def go_to_game_over_view():
 def go_to_view_by_name(name):
     view = get_view_by_name(name)
     revit.uidoc.ActiveView = view
+    #print UI, UI.UIView
+    #UI.UIView.ZoomToFit(UI.UIView)
     revit.uidoc.RefreshActiveView()
 
 def go_to_god_view():

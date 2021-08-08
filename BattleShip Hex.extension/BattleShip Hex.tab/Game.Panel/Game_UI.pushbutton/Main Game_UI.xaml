@@ -1,5 +1,5 @@
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FontFamily="RomanD" ResizeMode="NoResize" Width="600" Height="400"   Title="BattleShip Hex!!!" Topmost="True" WindowStartupLocation="CenterScreen" BorderBrush="#FF004EAC" Foreground="#FFC9C9C9" OpacityMask="#FFDAE8FD">
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" FontFamily="RomanD" ResizeMode="NoResize" Width="600" Height="400"   Title="BattleShip Hex!!!" Topmost="True" WindowStartupLocation="Manual" BorderBrush="#FF004EAC" Foreground="#FFC9C9C9" OpacityMask="#FFDAE8FD">
     <Window.Background>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
             <GradientStop Color="#FF7BA9C9" Offset="0.367"/>

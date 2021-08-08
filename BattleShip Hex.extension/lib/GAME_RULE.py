@@ -49,7 +49,7 @@ def play(team):
     """
 
 
-
+    #CAMERA.set_view(team, type = "3d")
     with revit.TransactionGroup("Play"):
         target = SHIP.get_target_by_team(team)
         SHIP.move_target(target, random.randint(0,5))

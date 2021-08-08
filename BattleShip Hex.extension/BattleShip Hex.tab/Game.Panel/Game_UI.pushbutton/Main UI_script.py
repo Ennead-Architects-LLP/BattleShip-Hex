@@ -39,6 +39,7 @@ class edit_layout_window(WPFWindow):
             GAME_RULE.reset_map()
             CAMERA.go_to_view_by_name("ready to play")
             forms.alert("team A click ok when ready")
+            CAMERA.set_view("A", type = "3d")
             self.Close()
             UI_Window().ShowDialog()
 
@@ -93,8 +94,9 @@ class UI_Window(WPFWindow):
         WPFWindow.__init__(self, xamlfile)
         self.team = "A"
         self.team_display.Text = "Team A"
-        CAMERA.set_view(self.team, type = "3d")
         GAME_RULE.reset_map()
+        #CAMERA.return_to_title_screen()
+        CAMERA.close_other_view()
         output= script.get_output()
         output.close_others()
 
@@ -105,7 +107,11 @@ class UI_Window(WPFWindow):
 
     def play(self, sender, e):
         #forms.alert("Player team {}".format(self.team))
-
+        """
+        if revit.uidoc.ActiveView.Name == "Title Screen":
+            CAMERA.set_view("A", type = "3d")
+            forms.alert("Player A get ready!")
+        """
         if GAME_RULE.play(self.team) == "turn ended":
             CAMERA.pause_view(1)
             revit.uidoc.ActiveView = CAMERA.get_view_by_name("turn ended_{}".format(SHIP.get_enemy(self.team)))
