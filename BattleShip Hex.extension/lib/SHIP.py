@@ -8,7 +8,14 @@ import GAME_RULE
 
 def get_all_nodes():
     generic_models = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()
-    nodes = filter(lambda x: x.Symbol.Family.Name == "node", generic_models)
+    def filter_by_family_name(x, name):
+        if not hasattr(x, 'Symbol'):
+            return False
+        if x.Symbol.Family.Name != name:
+            return False
+        return True
+
+    nodes = filter(lambda x: filter_by_family_name(x, "node"), generic_models)
     return nodes
 
 def get_closest_tile_by_node(node):
@@ -57,7 +64,16 @@ def update_ship_status(ship):
 
 def get_all_ships():
     generic_models = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()
-    ships = filter(lambda x: "ship" in x.Symbol.Family.Name, generic_models)
+
+    def filter_by_str_in_family_name(x, string):
+        if not hasattr(x, 'Symbol'):
+            return False
+        if string not in x.Symbol.Family.Name:
+            return False
+        return True
+
+    ships = filter(lambda x: filter_by_str_in_family_name(x, "ship"), generic_models)
+
     return ships
 
 def get_all_ships_in_team(team):
@@ -99,6 +115,16 @@ def reset_ship(ship):
 
         #to do: get nodes below and reset is_hit to no
 
+def get_orientation(ship):
+    return ship.LookupParameter("orientation_index").AsInteger()
+
+def rotate_orientation(ship):
+    with revit.Transaction("rotate_ship"):
+        current_orientation = get_orientation(ship)
+        new_index = current_orientation + 1 if current_orientation + 1 <=2 else 0
+        ship.LookupParameter("orientation_index").Set(new_index)
+
+
 ################### bomb content  ###################
 def get_bomb_symbol_old():
     generic_model_types = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsElementType().ToElements()
@@ -112,7 +138,14 @@ def get_bomb_symbol_old():
 
 def get_bomb():
     generic_models = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()
-    bomb = filter(lambda x: x.Symbol.Family.Name == "bomb", generic_models)
+    def filter_by_family_name(x, name):
+        if not hasattr(x, 'Symbol'):
+            return False
+        if x.Symbol.Family.Name != name:
+            return False
+        return True
+
+    bomb = filter(lambda x: filter_by_family_name(x, "bomb"), generic_models)
     return bomb[0]
 
 def bomb_show(bomb):
@@ -128,7 +161,14 @@ def bomb_hide(bomb):
 
 def get_target_by_team(team):
     generic_models = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()
-    targets = filter(lambda x: x.Symbol.Family.Name == "target", generic_models)
+    def filter_by_family_name(x, name):
+        if not hasattr(x, 'Symbol'):
+            return False
+        if x.Symbol.Family.Name != name:
+            return False
+        return True
+
+    targets = filter(lambda x: filter_by_family_name(x, "target"), generic_models)
     targets = filter(lambda x: get_ship_team(x) == team, targets)
     return targets[0]
 

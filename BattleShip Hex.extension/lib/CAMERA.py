@@ -24,6 +24,10 @@ def go_to_game_over_view():
     revit.uidoc.ActiveView = view
     revit.uidoc.RefreshActiveView()
 
+def go_to_view_by_name(name):
+    view = get_view_by_name(name)
+    revit.uidoc.ActiveView = view
+    revit.uidoc.RefreshActiveView()
 
 def go_to_god_view():
     view = get_view_by_name("god view")
@@ -53,3 +57,6 @@ def zoom_to_player(player):
     #with revit.Transaction("redraw views"):
     revit.uidoc.ShowElements(player)
     revit.uidoc.RefreshActiveView()
+
+def highlight_element(element):
+    revit.get_selection().set_to(element)

@@ -4,9 +4,19 @@ import BOARD
 
 def get_all_tiles(team = None):
     generic_models = DB.FilteredElementCollector(revit.doc).OfCategory(DB.BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()
-    tiles = filter(lambda x: x.Symbol.Family.Name == "tile", generic_models)
+
+    def filter_by_family_name(x, name):
+        if not hasattr(x, 'Symbol'):
+            return False
+        if x.Symbol.Family.Name != name:
+            return False
+        return True
+
+    tiles = filter(lambda x: filter_by_family_name(x, "tile"), generic_models)
     if team != None:
         tiles = filter(lambda x: get_tile_team(x) == team, tiles)
+
+
     return tiles
 
 def get_tile_team(tile):
@@ -42,5 +52,6 @@ def bomb_tile(tile, hit):
 
 def reset_tile(tile):
     with revit.Transaction("tile graphic change"):
+        #set_selection_to_tiles(tile)
         tile.LookupParameter("show_skull").Set(0)
         tile.LookupParameter("show_miss symbol").Set(0)

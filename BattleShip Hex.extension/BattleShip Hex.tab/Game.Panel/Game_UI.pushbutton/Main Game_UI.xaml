@@ -32,10 +32,7 @@
 
         <Button Content="Fire" Click="play" Height="90" FontSize="48" FontFamily="Snap ITC" BorderBrush="#FFFF2222"/>
         <Button Content="Reset Game" Click="reset_game"/>
-
-
-
-
+				<Button Content="Edit Map(Pre-Game)" Click="edit_map"/>
 
     </StackPanel>
 
