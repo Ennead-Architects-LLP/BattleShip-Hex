@@ -37,8 +37,8 @@
                     <Button Content="Select Next Ship"   Click="sel_next_ship"/>
                     <Button Content="Select Previous Ship"   Click="sel_prev_ship"/>
                     <Button Content="Rotate Ship"   Click="rotate_ship"/>
-                    <RadioButton x:Name="pick_mode_yard" Click="pick_opt_changed" Content="Yard" IsChecked="True"/>
-                    <RadioButton Content="Map" Click="pick_opt_changed"/>
+                    <RadioButton x:Name="pick_mode_yard" Click="pick_opt_changed" Content="Yard" />
+                    <RadioButton Content="Map" Click="pick_opt_changed" IsChecked="True"/>
 
                 </StackPanel>
 
@@ -46,7 +46,7 @@
         </Grid>
 
         <Button Content="Confirm" Click="confirm_layout" Height="90" FontSize="48" FontFamily="Snap ITC" BorderBrush="#FFFF2222"/>
-	    <Button Content="Clear Board" Click="clear_layout" Height="90" FontSize="48" FontFamily="Snap ITC" BorderBrush="#FFFF2222"/>
+	    <Button Content="Show Zone" Click="show_zone" Height="90" FontSize="48" FontFamily="Snap ITC" BorderBrush="#FFFF2222"/>
 
 
 

@@ -93,6 +93,59 @@ def get_ship_team(ship):
 
 def get_ship_id(ship):
     return ship.LookupParameter("ship_id").AsString()
+"""
+def get_ship_position_x(ship):
+    return ship.LookupParameter("_POSITION_X").AsString()
+def get_ship_position_y(ship):
+    return ship.LookupParameter("_POSITION_Y").AsString()
+def set_ship_position_xy(ship, x, y):
+    with revit.Transaction("set ship position"):
+        ship.LookupParameter("_POSITION_X").Set(str(x))
+        ship.LookupParameter("_POSITION_Y").Set(str(y))
+"""
+def get_closest_tile_by_ship(ship):
+
+    all_tiles = BOARD.get_all_tiles()
+    pt_a = ship.Location.Point
+    for tile in all_tiles:
+        pt_b = tile.Location.Point
+        dist = pt_a.DistanceTo(pt_b)
+        if GAME_RULE.almost_equal(dist, 0):
+            return tile
+    return "no close tile found"
+
+def move_ship(ship, direction):
+    tile = get_closest_tile_by_ship(ship)
+    x = BOARD.get_tile_position_x(tile)
+    y = int(BOARD.get_tile_position_y(tile))
+    team = get_ship_team(ship)
+    """direction = E,NE,NW,W,SW,SE.  E = true east, then courter-clockwise"""
+    if x == "A" and direction in ["NE","NW"]:
+        # cannot have letter smaller than A.
+        return
+    if direction == "E":
+        y += 1
+    elif direction == "NE":
+        x = chr(ord(x) - 1)
+    elif direction == "NW":
+        x = chr(ord(x) - 1)
+        y -= 1
+    elif direction == "W":
+        y -= 1
+    elif direction == "SW":
+        x = chr(ord(x) + 1)
+    elif direction == "SE":
+        x = chr(ord(x) + 1)
+        y += 1
+
+    new_position_tile = BOARD.get_tile_by_XY(x,y, team)
+
+    if isinstance(new_position_tile, str) and "not" in new_position_tile:
+        return
+    with revit.Transaction("move ship"):
+        ship.Location.Point = new_position_tile.Location.Point
+        #set_ship_position_xy(ship, x, y)
+        #print "updated"
 
 def get_ship_nodes(ship):
     all_nodes = get_all_nodes()
@@ -103,6 +156,15 @@ def get_tiles_below_ship(ship):
     nodes = get_ship_nodes(ship)
     tiles = map(get_closest_tile_by_node, nodes)
     return tiles
+def get_tiles_in_ship_zone(ship):
+    zone_tiles = []
+    ship_tiles = get_tiles_below_ship(ship)
+    for tile in ship_tiles:
+        neighbor_tiles = BOARD.get_neighbor_tiles(tile)
+        zone_tiles.extend(neighbor_tiles)
+    zone_tiles = list(set(zone_tiles))
+    return zone_tiles
+
 
 def reset_ship(ship):
     with revit.Transaction("ship reset graphic change"):
@@ -121,7 +183,7 @@ def get_orientation(ship):
 def rotate_orientation(ship):
     with revit.Transaction("rotate_ship"):
         current_orientation = get_orientation(ship)
-        new_index = current_orientation + 1 if current_orientation + 1 <=2 else 0
+        new_index = current_orientation + 1 if current_orientation + 1 <=5 else 0
         ship.LookupParameter("orientation_index").Set(new_index)
 
 

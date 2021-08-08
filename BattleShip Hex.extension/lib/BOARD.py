@@ -41,6 +41,43 @@ def get_tile_by_XY(x,y, team):
 def set_selection_to_tiles(tiles):
     revit.get_selection().set_to(tiles)
 
+def get_neighbor_tiles(tile):
+    x = get_tile_position_x(tile)
+    y = int(get_tile_position_y(tile))
+    team = get_tile_team(tile)
+    neighbor_tiles = []
+
+    def check_direction(x , y , direction):
+        """direction = E,NE,NW,W,SW,SE.  E = true east, then courter-clockwise"""
+        if x == "A" and direction in ["NE","NW"]:
+            # cannot have letter smaller than A.
+            pass
+        if direction == "E":
+            y += 1
+        elif direction == "NE":
+            x = chr(ord(x) - 1)
+        elif direction == "NW":
+            x = chr(ord(x) - 1)
+            y -= 1
+        elif direction == "W":
+            y -= 1
+        elif direction == "SW":
+            x = chr(ord(x) + 1)
+        elif direction == "SE":
+            x = chr(ord(x) + 1)
+            y += 1
+
+        return x,y
+
+    for direction in ["E","NE","NW","W","SW","SE"]:
+
+        temp_x , temp_y = check_direction(x , y , direction)
+        temp_tile = get_tile_by_XY(temp_x , temp_y , team)
+
+        if not isinstance(temp_tile,str):
+            neighbor_tiles.append(temp_tile)
+            #print_tile_position(temp_tile)
+    return neighbor_tiles
 
 def bomb_tile(tile, hit):
     BOARD.set_selection_to_tiles([tile])

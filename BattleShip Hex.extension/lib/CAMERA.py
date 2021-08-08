@@ -27,14 +27,15 @@ def go_to_game_over_view():
 def go_to_view_by_name(name):
     view = get_view_by_name(name)
     revit.uidoc.ActiveView = view
-    #print UI, UI.UIView
-    #UI.UIView.ZoomToFit(UI.UIView)
+    view_zoom_extend(view)
     revit.uidoc.RefreshActiveView()
 
 def go_to_god_view():
     view = get_view_by_name("god view")
     revit.uidoc.ActiveView = view
     revit.uidoc.RefreshActiveView()
+
+
 
 def close_other_view():
     return
@@ -54,6 +55,11 @@ def get_view_by_name(name):
     for view in views:
         if view.Name == name:
             return view
+
+def view_zoom_extend(view):
+    return
+    print UI, UI.UIView
+    UI.UIView.ZoomToFit(UI.UIView)
 
 def zoom_to_player(player):
     #with revit.Transaction("redraw views"):

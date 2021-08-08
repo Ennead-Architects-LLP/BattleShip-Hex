@@ -12,6 +12,7 @@ from pyrevit.forms import WPFWindow
 import SHIP
 import GAME_RULE
 import CAMERA
+import BOARD
 
 xamlfile = script.get_bundle_file('Main Game_UI.xaml')
 class edit_layout_window(WPFWindow):
@@ -27,6 +28,10 @@ class edit_layout_window(WPFWindow):
         self.pick_ship_at_yard = self.pick_mode_yard.IsChecked
 
     def confirm_layout(self, sender, e):
+        if not pass_layout_test():
+            forms.alert("check ship layout")
+            """get failed ship and hight its zone"""
+            return
         if self.team !="B":
             self.team = "B"
             CAMERA.go_to_view_by_name("deploy A ended")
@@ -43,9 +48,21 @@ class edit_layout_window(WPFWindow):
             self.Close()
             UI_Window().ShowDialog()
 
-    def clear_layout(self, sender, e):
+    def show_zone(self, sender, e):
+        if len(revit.get_selection()) == 0:
+            return
+        ship = revit.get_selection()[0]
+        zone_tiles = SHIP.get_tiles_in_ship_zone(ship)
+        CAMERA.highlight_element(zone_tiles)
         pass
 
+    def pass_layout_test():
+        '''big ship(nodes >=3) cannot be in shallow water(use zone), cannon cannot be on water, not ship over map edge
+        BOARD.is_water_shallow(tile)
+        BOARD.is_land(tile)
+
+        '''
+        return True
 
     def sel_ship(self, next = True):
         if self.pick_ship_at_yard:
@@ -74,19 +91,29 @@ class edit_layout_window(WPFWindow):
         #print ship
         SHIP.rotate_orientation(ship)
 
+    def ship_move_by_keyword(self, keyword):
+        if len(revit.get_selection()) == 0:
+            return
+        ship = revit.get_selection()[0]
+        SHIP.move_ship(ship, keyword)
+        self.update_ship_display(ship)
     def move_NW(self, sender, e):
-        pass
+        self.ship_move_by_keyword("NW")
     def move_E(self, sender, e):
-        pass
+        self.ship_move_by_keyword("E")
     def move_NE(self, sender, e):
-        pass
+        self.ship_move_by_keyword("NE")
     def move_SE(self, sender, e):
-        pass
+        self.ship_move_by_keyword("SE")
     def move_SW(self, sender, e):
-        pass
+        self.ship_move_by_keyword("SW")
     def move_W(self, sender, e):
-        pass
-
+        self.ship_move_by_keyword("W")
+    def update_ship_display(self,ship):
+        tile = SHIP.get_closest_tile_by_ship(ship)
+        x = BOARD.get_tile_position_x(tile)
+        y = int(BOARD.get_tile_position_y(tile))
+        self.ship_position_display.Text = "{}-{}".format(x, y)
 
 
 class UI_Window(WPFWindow):
