@@ -58,6 +58,10 @@ def get_view_by_name(name):
 
 def view_zoom_extend(view):
     return
+    all_els = DB.FilteredElementCollector(revit.doc, view.Id).WhereElementIsNotElementType().ToElements()
+    revit.uidoc.ShowElements(all_els)
+    revit.uidoc.RefreshActiveView()
+    return
     print UI, UI.UIView
     UI.UIView.ZoomToFit(UI.UIView)
 

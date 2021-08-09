@@ -14,7 +14,7 @@ import GAME_RULE
 import CAMERA
 import BOARD
 
-xamlfile = script.get_bundle_file('Main Game_UI.xaml')
+
 class edit_layout_window(WPFWindow):
     def __init__(self):
         xamlfile = script.get_bundle_file('ShipLayout_UI.xaml')
@@ -28,10 +28,14 @@ class edit_layout_window(WPFWindow):
         self.pick_ship_at_yard = self.pick_mode_yard.IsChecked
 
     def confirm_layout(self, sender, e):
-        if not pass_layout_test():
-            forms.alert("check ship layout")
+        revit.get_selection().set_to([])
+
+        layout_test_result = self.pass_layout_test()
+        if layout_test_result != True:
+            forms.alert(layout_test_result)
             """get failed ship and hight its zone"""
             return
+
         if self.team !="B":
             self.team = "B"
             CAMERA.go_to_view_by_name("deploy A ended")
@@ -54,14 +58,36 @@ class edit_layout_window(WPFWindow):
         ship = revit.get_selection()[0]
         zone_tiles = SHIP.get_tiles_in_ship_zone(ship)
         CAMERA.highlight_element(zone_tiles)
-        pass
 
-    def pass_layout_test():
-        '''big ship(nodes >=3) cannot be in shallow water(use zone), cannon cannot be on water, not ship over map edge
-        BOARD.is_water_shallow(tile)
-        BOARD.is_land(tile)
 
-        '''
+    def pass_layout_test(self):
+
+        def test_ship(ship):
+            #test 1, no ship over edge
+            tiles = SHIP.get_tiles_below_ship(ship)
+            for tile in tiles:
+                if isinstance(tile, str):
+                    return "ship cannot be over edge"
+
+            #test2, no ship on land
+            tiles = SHIP.get_tiles_below_ship(ship)
+            for tile in tiles:
+                if BOARD.is_land(tile):
+                    return "ship cannot be on land"
+
+            #3 big ship no in shallow water
+            nodes = SHIP.get_ship_nodes(ship)
+            if len(nodes) >= 3:
+                tiles = SHIP.get_tiles_below_ship(ship)
+                for tile in tiles:
+                    if BOARD.is_shallow_water(tile):
+                        return "big ship cannot be on shallow water"
+
+            return True
+        for ship in SHIP.get_all_ships_in_team(self.team):
+            test_result = test_ship(ship)
+            if isinstance(test_result,str):
+                return test_result
         return True
 
     def sel_ship(self, next = True):
@@ -78,8 +104,10 @@ class edit_layout_window(WPFWindow):
         CAMERA.highlight_element(ship)
         #print self.pick_index
 
+
     def sel_next_ship(self, sender, e):
         self.sel_ship(next = True)
+
     def sel_prev_ship(self, sender, e):
         self.sel_ship(next = False)
 
@@ -97,18 +125,25 @@ class edit_layout_window(WPFWindow):
         ship = revit.get_selection()[0]
         SHIP.move_ship(ship, keyword)
         self.update_ship_display(ship)
+
     def move_NW(self, sender, e):
         self.ship_move_by_keyword("NW")
+
     def move_E(self, sender, e):
         self.ship_move_by_keyword("E")
+
     def move_NE(self, sender, e):
         self.ship_move_by_keyword("NE")
+
     def move_SE(self, sender, e):
         self.ship_move_by_keyword("SE")
+
     def move_SW(self, sender, e):
         self.ship_move_by_keyword("SW")
+
     def move_W(self, sender, e):
         self.ship_move_by_keyword("W")
+
     def update_ship_display(self,ship):
         tile = SHIP.get_closest_tile_by_ship(ship)
         x = BOARD.get_tile_position_x(tile)
@@ -116,8 +151,12 @@ class edit_layout_window(WPFWindow):
         self.ship_position_display.Text = "{}-{}".format(x, y)
 
 
+
+
+
 class UI_Window(WPFWindow):
     def __init__(self):
+        xamlfile = script.get_bundle_file('Main Game_UI.xaml')
         WPFWindow.__init__(self, xamlfile)
         self.team = "A"
         self.team_display.Text = "Team A"

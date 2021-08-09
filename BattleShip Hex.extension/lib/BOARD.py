@@ -79,6 +79,16 @@ def get_neighbor_tiles(tile):
             #print_tile_position(temp_tile)
     return neighbor_tiles
 
+def is_land(tile):
+    if tile.Symbol.get_Parameter(DB.BuiltInParameter.SYMBOL_NAME_PARAM).AsString() == "land tile":
+        return True
+    return False
+
+def is_shallow_water(tile):
+    if tile.Symbol.get_Parameter(DB.BuiltInParameter.SYMBOL_NAME_PARAM).AsString() == "shallow water tile":
+        return True
+    return False
+
 def bomb_tile(tile, hit):
     BOARD.set_selection_to_tiles([tile])
     with revit.Transaction("tile graphic change"):

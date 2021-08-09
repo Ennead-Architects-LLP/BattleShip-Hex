@@ -14,12 +14,12 @@
                 <ColumnDefinition Width=" 200"/>
             </Grid.ColumnDefinitions>
             <Canvas Grid.Column=" 0" Height="180" Margin="0,0,340,0">
-                <Button Content="NW" Canvas.Left="53" Canvas.Top="14" Width="30" Click="target_move_NW"/>
-                <Button Content="E" Canvas.Left="153" Canvas.Top="59" Width="30" Click="target_move_E"/>
-                <Button Content="NE" Canvas.Left="106" Canvas.Top="14" Width="30" Click="target_move_NE"/>
-                <Button Content="SE" Canvas.Left="107" Canvas.Top="110" Width="30" Click="target_move_SE"/>
-                <Button Content="SW" Canvas.Left="50" Canvas.Top="110" Width="30" Click="target_move_SW"/>
-                <Button Content="W" Canvas.Left="10" Canvas.Top="61" Width="30" Click="target_move_W"/>
+                <Button Content="NW" Canvas.Left="40" Canvas.Top="5" Width="56" Click="target_move_NW" Height="39"/>
+                <Button Content="E" Canvas.Left="139" Canvas.Top="49" Width="58" Click="target_move_E" Height="41"/>
+                <Button Content="NE" Canvas.Left="93" Canvas.Top="5" Width="56" Click="target_move_NE" Height="39"/>
+                <Button Content="SE" Canvas.Left="94" Canvas.Top="101" Width="56" Click="target_move_SE" Height="39"/>
+                <Button Content="SW" Canvas.Left="37" Canvas.Top="101" Width="56" Click="target_move_SW" Height="39"/>
+                <Button Content="W" Canvas.Left="-6" Canvas.Top="50" Width="62" Click="target_move_W" Height="43"/>
                 <TextBlock x:Name ="target_position_display" TextAlignment="Center"  Canvas.Left="46" TextWrapping="Wrap" Text="target" Canvas.Top="60" Foreground="White" FontSize="22" Width="100"/>
             </Canvas>
             <GroupBox Grid.Column="1" Header="Current Team" Width="120" Height="80">
@@ -32,7 +32,7 @@
 
         <Button Content="Fire" Click="play" Height="90" FontSize="48" FontFamily="Snap ITC" BorderBrush="#FFFF2222"/>
         <Button Content="Reset Game" Click="reset_game"/>
-				<Button Content="Edit Map(Pre-Game)" Click="edit_map"/>
+        <Button Content="Edit Map(Pre-Game)" Click="edit_map"/>
 
     </StackPanel>
 

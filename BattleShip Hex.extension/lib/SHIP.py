@@ -172,6 +172,9 @@ def reset_ship(ship):
         team_mat = GAME_RULE.get_material_by_name("TEAM {}".format(get_ship_team(ship)))
         ship.LookupParameter("ship_mat.").Set(team_mat.Id)
 
+
+        ship.LookupParameter("ship_id").Set(str(ship.Id))
+
         for node in get_ship_nodes(ship):
             node.LookupParameter("Comments").Set("ok")
 
