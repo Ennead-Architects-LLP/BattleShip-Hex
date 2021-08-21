@@ -22,6 +22,7 @@ class edit_layout_window(WPFWindow):
         self.pick_ship_at_yard = self.pick_mode_yard.IsChecked
         self.team = "A"
         CAMERA.go_to_view_by_name("2d_A_layout")
+        CAMERA.zoom_to_board(self.team)
         self.pick_index = 0
 
     def pick_opt_changed(self, sender,e):
@@ -41,6 +42,7 @@ class edit_layout_window(WPFWindow):
             CAMERA.go_to_view_by_name("deploy A ended")
             forms.alert("click ok when you are ready")
             CAMERA.go_to_view_by_name("2d_B_layout")
+            CAMERA.zoom_to_board(self.team)
         else:
             self.team = "done_layout"
 
@@ -49,6 +51,7 @@ class edit_layout_window(WPFWindow):
             CAMERA.go_to_view_by_name("ready to play")
             forms.alert("team A click ok when ready")
             CAMERA.set_view("A", type = "3d")
+
             self.Close()
             UI_Window().ShowDialog()
 
@@ -59,6 +62,20 @@ class edit_layout_window(WPFWindow):
         zone_tiles = SHIP.get_tiles_in_ship_zone(ship)
         CAMERA.highlight_element(zone_tiles)
 
+    def filter_ship(self, elements, is_single = True):
+        if len(revit.get_selection()) == 0:
+            return
+        def filter_by_str_in_family_name(x, string):
+            if not hasattr(x, 'Symbol'):
+                return False
+            if string not in x.Symbol.Family.Name:
+                return False
+            return True
+
+        ships = filter(lambda x: filter_by_str_in_family_name(x, "ship"), revit.get_selection())
+        if len(ships) == 0:
+            return
+        return ships[0] if is_single else ships
 
     def pass_layout_test(self):
 
@@ -115,16 +132,18 @@ class edit_layout_window(WPFWindow):
     def rotate_ship(self, sender, e):
         if len(revit.get_selection()) == 0:
             return
-        ship = revit.get_selection()[0]
+        ship = self.filter_ship(revit.get_selection())
         #print ship
-        SHIP.rotate_orientation(ship)
+        if ship:
+            SHIP.rotate_orientation(ship)
 
     def ship_move_by_keyword(self, keyword):
         if len(revit.get_selection()) == 0:
             return
-        ship = revit.get_selection()[0]
-        SHIP.move_ship(ship, keyword)
-        self.update_ship_display(ship)
+        ship = self.filter_ship(revit.get_selection())
+        if ship:
+            SHIP.move_ship(ship, keyword)
+            self.update_ship_display(ship)
 
     def move_NW(self, sender, e):
         self.ship_move_by_keyword("NW")
@@ -231,4 +250,7 @@ class UI_Window(WPFWindow):
     def target_move_E(self, sender, e):
         self.target_move_keyword("E")
 
-UI_Window().ShowDialog()
+
+if __name__ == "__main__":
+    #UI_Window().ShowDialog()
+    edit_layout_window().ShowDialog()
