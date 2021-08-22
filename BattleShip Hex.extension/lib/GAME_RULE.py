@@ -22,6 +22,12 @@ def change_to_player_view_OLD():
     """active view as player view so two player can be on same machine!!!. use plan for target, use 3d for battle"""
     pass
 
+def update_team_attack_pt(team, pt):
+    if team == "A":
+        attack_credit_A += pt
+    else:
+        attack_credit_B += pt
+
 def play(team):
     """
     tiles = BOARD.get_all_tiles()
